@@ -1,8 +1,8 @@
-// RAYMARCHING_CUBE is defined, otherwise Shader Graph cannot compile this node.
+// RAYMARCHING_SPHERE is defined, otherwise Shader Graph cannot compile this node.
 // This definition should be unique to this function. So, it is recommended to define it similar to the function name.
-#ifndef RAYMARCHING_CUBE
+#ifndef RAYMARCHING_SPHERE
 
-    #define RAYMARCHING_CUBE
+    #define RAYMARCHING_SPHERE
 
     #include "Assets/Common Shaders/Shapes.hlsl"
 
@@ -26,7 +26,7 @@
 
 
     struct ShapeOptions {
-        float3 size; // The size of the cube.
+        float radius; // The radius of the sphere.
     };
 
     ShapeOptions _shapeOptions;
@@ -34,8 +34,8 @@
 
 
     float Shape(float3 position) {
-        float cube = Cube(position, _shapeOptions.size); // calculate the distance to the cube surface
-        return cube;
+        float sphere = Sphere(position, _shapeOptions.radius); // calculate the distance to the sphere surface
+        return sphere;
     }
 
 
@@ -103,8 +103,8 @@
     // minDistance: The minimum distance to the surface. If the distance to the surface is less than this value, the ray is considered to have hit the surface.
     // maxDistance: The maximum distance to the surface. If the ray length exceeds this distance, it is considered to have missed the surface.
     // maxIterations: The maximum number of iterations to perform. This is used to prevent infinite loops.
-    void RayMarchingCube_float(float3 size, float3 rayStartPoint, float3 rayDirection, float minDistance, float maxDistance, int maxIterations, float3 lightDirection, half4 color, float brightness, out half4 Out) {
-        _shapeOptions.size = size; // set the size of the object
+    void RayMarchingSphere_float(float radius, float3 rayStartPoint, float3 rayDirection, float minDistance, float maxDistance, int maxIterations, float3 lightDirection, half4 color, float brightness, out half4 Out) {
+        _shapeOptions.radius = radius; // set the size of the object
         rayDirection = normalize(rayDirection); // normalize the ray direction vector
 
         // Set the ray marching options

@@ -1,8 +1,8 @@
-// RAYMARCHING_CUBE is defined, otherwise Shader Graph cannot compile this node.
+// RAYMARCHING_CAPSULE is defined, otherwise Shader Graph cannot compile this node.
 // This definition should be unique to this function. So, it is recommended to define it similar to the function name.
-#ifndef RAYMARCHING_CUBE
+#ifndef RAYMARCHING_CAPSULE
 
-    #define RAYMARCHING_CUBE
+    #define RAYMARCHING_CAPSULE
 
     #include "Assets/Common Shaders/Shapes.hlsl"
 
@@ -26,7 +26,8 @@
 
 
     struct ShapeOptions {
-        float3 size; // The size of the cube.
+        float height; // The height of the capsule.
+        float radius; // The radius of the capsule.
     };
 
     ShapeOptions _shapeOptions;
@@ -34,8 +35,8 @@
 
 
     float Shape(float3 position) {
-        float cube = Cube(position, _shapeOptions.size); // calculate the distance to the cube surface
-        return cube;
+        float capsule = Capsule(position, _shapeOptions.height, _shapeOptions.radius); // calculate the distance to the capsule surface
+        return capsule;
     }
 
 
@@ -103,8 +104,10 @@
     // minDistance: The minimum distance to the surface. If the distance to the surface is less than this value, the ray is considered to have hit the surface.
     // maxDistance: The maximum distance to the surface. If the ray length exceeds this distance, it is considered to have missed the surface.
     // maxIterations: The maximum number of iterations to perform. This is used to prevent infinite loops.
-    void RayMarchingCube_float(float3 size, float3 rayStartPoint, float3 rayDirection, float minDistance, float maxDistance, int maxIterations, float3 lightDirection, half4 color, float brightness, out half4 Out) {
-        _shapeOptions.size = size; // set the size of the object
+    void RayMarchingCapsule_float(float height, float radius, float3 rayStartPoint, float3 rayDirection, float minDistance, float maxDistance, int maxIterations, float3 lightDirection, half4 color, float brightness, out half4 Out) {
+        _shapeOptions.height = height; // set the height of the capsule
+        _shapeOptions.radius = radius; // set the radius of the capsule
+
         rayDirection = normalize(rayDirection); // normalize the ray direction vector
 
         // Set the ray marching options

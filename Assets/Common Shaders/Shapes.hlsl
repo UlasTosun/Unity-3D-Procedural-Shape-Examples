@@ -8,7 +8,9 @@ float Cube(float3 position, float3 size) {
 
 
 
-float Capsule(float3 position, float3 startPoint, float3 endPoint, float radius) {
+float Capsule(float3 position, float height, float radius) {
+    float3 startPoint = float3(0, -height / 2, 0); // starting point of the capsule
+    float3 endPoint = float3(0, height / 2, 0); // ending point of the capsule
     float3 ab = endPoint - startPoint; // vector from start to end
     float3 ap = position - startPoint; // vector from start to position
     float t = clamp(dot(ap, ab) / dot(ab, ab), 0.0, 1.0); // clamp the projection of ap onto ab to the range [0, 1]
