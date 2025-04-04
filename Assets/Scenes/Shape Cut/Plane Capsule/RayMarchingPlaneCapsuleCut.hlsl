@@ -1,8 +1,8 @@
-// RAYMARCHING_CUBESPHERECUT is defined, otherwise Shader Graph cannot compile this node.
+// RAYMARCHING_PLANECAPSULECUT is defined, otherwise Shader Graph cannot compile this node.
 // This definition should be unique to this function. So, it is recommended to define it similar to the function name.
-#ifndef RAYMARCHING_CUBESPHERECUT
+#ifndef RAYMARCHING_PLANECAPSULECUT
 
-    #define RAYMARCHING_CUBESPHERECUT
+    #define RAYMARCHING_PLANECAPSULECUT
 
     #include "Assets/Common Shaders/Shapes.hlsl"
 
@@ -27,9 +27,10 @@
 
 
     struct ShapeOptions {
-        float3 cubeSize; // The size of the cube.
-        float3 cubePosition; // The position of the cube.
-        float sphereRadius; // The radius of the sphere.
+        float3 planeNormal; // The normal vector of the plane.
+        float planeOffset; // The offset of the plane from the origin.
+        float capsuleHeight; // The height of the capsule.
+        float capsuleRadius; // The radius of the capsule.
         float smoothness; // The smoothness of the blending between the two shapes.
     };
 
@@ -38,16 +39,16 @@
 
 
     float Shape(float3 position) {
-        float sphere = Sphere(position, _shapeOptions.sphereRadius); // calculate the distance to the sphere surface
-        return sphere;
+        float capsule = Capsule(position, _shapeOptions.capsuleHeight, _shapeOptions.capsuleRadius); // calculate the distance to the capsule surface
+        return capsule;
     }
 
 
 
     float CutShape(float3 position) {
         float shape = Shape(position); // calculate the distance to the shape surface
-        float cube = Cube(position - _shapeOptions.cubePosition, _shapeOptions.cubeSize); // calculate the distance to the cube surface
-        float intersection = max(shape, cube); // calculate the intersection of the two shapes
+        float plane = Plane(position, _shapeOptions.planeNormal, _shapeOptions.planeOffset); // calculate the distance to the plane surface
+        float intersection = max(shape, plane); // calculate the intersection of the two shapes
         return intersection;
     }
 
@@ -127,12 +128,13 @@
     // minDistance: The minimum distance to the surface. If the distance to the surface is less than this value, the ray is considered to have hit the surface.
     // maxDistance: The maximum distance to the surface. If the ray length exceeds this distance, it is considered to have missed the surface.
     // maxIterations: The maximum number of iterations to perform. This is used to prevent infinite loops.
-    void RayMarchingCubeSphereCut_float(float3 cubeSize, float3 cubePosition, float sphereRadius, float smoothness, float3 rayStartPoint, float3 rayDirection, float minDistance, float maxDistance, int maxIterations, float3 lightDirection, half4 outerColor, half4 innerColor, float brightness, out half4 Out) {
+    void RayMarchingPlaneCapsuleCut_float(float3 planeNormal, float planeOffset, float capsuleHeight, float capsuleRadius, float smoothness, float3 rayStartPoint, float3 rayDirection, float minDistance, float maxDistance, int maxIterations, float3 lightDirection, half4 outerColor, half4 innerColor, float brightness, out half4 Out) {
 
         // Set the shape options
-        _shapeOptions.cubeSize = cubeSize;
-        _shapeOptions.cubePosition = cubePosition;
-        _shapeOptions.sphereRadius = sphereRadius;
+        _shapeOptions.planeNormal = planeNormal;
+        _shapeOptions.planeOffset = planeOffset;
+        _shapeOptions.capsuleHeight = capsuleHeight;
+        _shapeOptions.capsuleRadius = capsuleRadius;
         _shapeOptions.smoothness = smoothness;
 
         rayDirection = normalize(rayDirection); // normalize the ray direction vector

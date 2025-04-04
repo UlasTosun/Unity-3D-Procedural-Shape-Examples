@@ -28,7 +28,7 @@ float Sphere(float3 position, float radius) {
 
 float Plane(float3 position, float3 normal, float offset) {
     normal = normalize(normal); // ensure the normal is a unit vector
-    return dot(position, normal) - offset; // calculate the signed distance to the plane
+    return dot(position, normal) - offset; // calculate the absolute distance to the plane surface
 }
 
 
