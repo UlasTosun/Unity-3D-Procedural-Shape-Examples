@@ -40,15 +40,7 @@ float Torus(float3 position, float radius, float tubeRadius) {
 
 
 
-float Cone(float3 position, float height, float radius) {
-    float3 d = float3(length(position.xz), position.y, 0); // calculate the distance to the cone
-    float a = radius / height; // slope of the cone
-    return length(d) - (a * d.y); // return the distance to the surface of the cone
-}
-
-
-
 float Cylinder(float3 position, float height, float radius) {
-    float3 d = abs(position); // calculate the absolute position
-    return length(d.xz) - radius; // return the distance to the surface of the cylinder
+    float2 d = float2(length(position.xz) - radius, abs(position.y) - height / 2); // calculate distances in xz-plane and y-axis
+    return min(max(d.x, d.y), 0.0) + length(max(d, 0.0)); // return the signed distance to the cylinder
 }
