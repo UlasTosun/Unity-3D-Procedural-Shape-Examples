@@ -23,3 +23,32 @@ float Capsule(float3 position, float height, float radius) {
 float Sphere(float3 position, float radius) {
     return length(position) - radius; // calculate the distance to the sphere
 }
+
+
+
+float Plane(float3 position, float3 normal, float offset) {
+    normal = normalize(normal); // ensure the normal is a unit vector
+    return dot(position, normal) - offset; // calculate the signed distance to the plane
+}
+
+
+
+float Torus(float3 position, float radius, float tubeRadius) {
+    float3 d = float3(length(position.xz) - radius, position.y, 0); // calculate the distance to the torus
+    return length(d) - tubeRadius; // return the distance to the surface of the torus
+}
+
+
+
+float Cone(float3 position, float height, float radius) {
+    float3 d = float3(length(position.xz), position.y, 0); // calculate the distance to the cone
+    float a = radius / height; // slope of the cone
+    return length(d) - (a * d.y); // return the distance to the surface of the cone
+}
+
+
+
+float Cylinder(float3 position, float height, float radius) {
+    float3 d = abs(position); // calculate the absolute position
+    return length(d.xz) - radius; // return the distance to the surface of the cylinder
+}
