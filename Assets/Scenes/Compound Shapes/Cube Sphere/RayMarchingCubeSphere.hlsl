@@ -85,6 +85,7 @@
         for (int i = 0; i < options.maxIterations; i++) {
             endPoint = options.rayStartPoint + rayLength * options.rayDirection; // calculate the end point of the ray
             float distanceToSurface = Shape(endPoint) * side; // get the distance to the surface from the end point
+            distanceToSurface = abs(distanceToSurface); // take the absolute value of the distance to the surface, otherwise the ray goes back to the surface even if it is inside the surface
             rayLength += distanceToSurface; // increment the ray length by the distance to the surface
 
             if (distanceToSurface < options.minDistance || rayLength > options.maxDistance) // check if the ray has hit the surface or exceeded the maximum distance
