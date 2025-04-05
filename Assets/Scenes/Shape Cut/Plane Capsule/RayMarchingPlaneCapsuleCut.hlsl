@@ -21,7 +21,6 @@
     struct RayMarchingResults {
         float3 contactPoint; // The contact point of the ray with the surface.
         float rayLength; // The length of the ray at the contact point.
-        float contactSide; // The side of the contact point. This is used to determine if the ray has hit the surface from the inside or outside.
     };
 
 
@@ -40,15 +39,8 @@
 
     float Shape(float3 position) {
         float capsule = Capsule(position, _shapeOptions.capsuleHeight, _shapeOptions.capsuleRadius); // calculate the distance to the capsule surface
-        return capsule;
-    }
-
-
-
-    float CutShape(float3 position) {
-        float shape = Shape(position); // calculate the distance to the shape surface
         float plane = Plane(position, _shapeOptions.planeNormal, _shapeOptions.planeOffset); // calculate the distance to the plane surface
-        float intersection = max(shape, plane); // calculate the intersection of the two shapes
+        float intersection = max(capsule, plane); // calculate the intersection of the two shapes
         return intersection;
     }
 
@@ -90,21 +82,12 @@
     void MarchRay(RayMarchingOptions options, out RayMarchingResults results, float side = 1.0) {
         float rayLength = 0.0; // initialize the ray length to zero
         float3 endPoint; // initialize the contact point to zero
-        float contactSide = 1.0; // initialize the side to 1.0
 
         for (int i = 0; i < options.maxIterations; i++) {
             endPoint = options.rayStartPoint + rayLength * options.rayDirection; // calculate the end point of the ray
             float distanceToSurface = Shape(endPoint) * side; // get the distance to the surface from the end point
             distanceToSurface = abs(distanceToSurface); // take the absolute value of the distance to the surface, otherwise the ray goes back to the surface even if it is inside the surface
             rayLength += distanceToSurface; // increment the ray length by the distance to the surface
-
-            // Check if the ray has hit the cut surface
-            float cutDistance = CutShape(endPoint);
-            if (cutDistance < options.minDistance) {
-                rayLength += options.minDistance;
-                contactSide = -1.0; // set the side to -1.0 if the ray has hit the cut surface
-                continue;;
-            }
 
             if (distanceToSurface < options.minDistance || rayLength > options.maxDistance) // check if the ray has hit the surface or exceeded the maximum distance
                 break;
@@ -113,7 +96,6 @@
         // Set the results of the ray marching
         results.contactPoint = endPoint;
         results.rayLength = rayLength;
-        results.contactSide = contactSide; // set the side of the contact point
     }
 
 
@@ -128,7 +110,7 @@
     // minDistance: The minimum distance to the surface. If the distance to the surface is less than this value, the ray is considered to have hit the surface.
     // maxDistance: The maximum distance to the surface. If the ray length exceeds this distance, it is considered to have missed the surface.
     // maxIterations: The maximum number of iterations to perform. This is used to prevent infinite loops.
-    void RayMarchingPlaneCapsuleCut_float(float3 planeNormal, float planeOffset, float capsuleHeight, float capsuleRadius, float smoothness, float3 rayStartPoint, float3 rayDirection, float minDistance, float maxDistance, int maxIterations, float3 lightDirection, half4 outerColor, half4 innerColor, float brightness, out half4 Out) {
+    void RayMarchingPlaneCapsuleCut_float(float3 planeNormal, float planeOffset, float capsuleHeight, float capsuleRadius, float smoothness, float3 rayStartPoint, float3 rayDirection, float minDistance, float maxDistance, int maxIterations, float3 lightDirection, half4 color, float brightness, out half4 Out) {
 
         // Set the shape options
         _shapeOptions.planeNormal = planeNormal;
@@ -155,14 +137,6 @@
             discard; // instead of using discard, use depth buffer to avoid depth issues and z-fighting
         
         float3 normal = CalculateSurfaceNormals(results.contactPoint); // calculate the normal vector at the end point of the ray
-        half4 color = outerColor;
-
-        // If the ray has hit the surface from the inside, render the inner surface
-        if (results.contactSide < 0.0) {
-            normal = -normal;
-            color = innerColor;
-        }
-
         float lambert = CalculateLambertLighting(normal, lightDirection, brightness); // calculate the Lambertian reflectance
 
         Out = half4(color.rgb * lambert, color.a); // set the output color to the color of the surface multiplied by the Lambertian reflectance
