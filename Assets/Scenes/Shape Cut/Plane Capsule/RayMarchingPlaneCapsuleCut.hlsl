@@ -30,7 +30,6 @@
         float planeOffset; // The offset of the plane from the origin.
         float capsuleHeight; // The height of the capsule.
         float capsuleRadius; // The radius of the capsule.
-        float smoothness; // The smoothness of the blending between the two shapes.
     };
 
     ShapeOptions _shapeOptions;
@@ -110,14 +109,13 @@
     // minDistance: The minimum distance to the surface. If the distance to the surface is less than this value, the ray is considered to have hit the surface.
     // maxDistance: The maximum distance to the surface. If the ray length exceeds this distance, it is considered to have missed the surface.
     // maxIterations: The maximum number of iterations to perform. This is used to prevent infinite loops.
-    void RayMarchingPlaneCapsuleCut_float(float3 planeNormal, float planeOffset, float capsuleHeight, float capsuleRadius, float smoothness, float3 rayStartPoint, float3 rayDirection, float minDistance, float maxDistance, int maxIterations, float3 lightDirection, half4 color, float brightness, out half4 Out) {
+    void RayMarchingPlaneCapsuleCut_float(float3 planeNormal, float planeOffset, float capsuleHeight, float capsuleRadius, float3 rayStartPoint, float3 rayDirection, float minDistance, float maxDistance, int maxIterations, float3 lightDirection, half4 color, float brightness, out half4 Out) {
 
         // Set the shape options
         _shapeOptions.planeNormal = planeNormal;
         _shapeOptions.planeOffset = planeOffset;
         _shapeOptions.capsuleHeight = capsuleHeight;
         _shapeOptions.capsuleRadius = capsuleRadius;
-        _shapeOptions.smoothness = smoothness;
 
         rayDirection = normalize(rayDirection); // normalize the ray direction vector
 

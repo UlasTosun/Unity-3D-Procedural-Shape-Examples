@@ -30,7 +30,6 @@
         float3 cubeSize; // The size of the cube.
         float3 cubePosition; // The position of the cube.
         float sphereRadius; // The radius of the sphere.
-        float smoothness; // The smoothness of the blending between the two shapes.
     };
 
     ShapeOptions _shapeOptions;
@@ -127,13 +126,12 @@
     // minDistance: The minimum distance to the surface. If the distance to the surface is less than this value, the ray is considered to have hit the surface.
     // maxDistance: The maximum distance to the surface. If the ray length exceeds this distance, it is considered to have missed the surface.
     // maxIterations: The maximum number of iterations to perform. This is used to prevent infinite loops.
-    void RayMarchingCubeSphereCut_float(float3 cubeSize, float3 cubePosition, float sphereRadius, float smoothness, float3 rayStartPoint, float3 rayDirection, float minDistance, float maxDistance, int maxIterations, float3 lightDirection, half4 outerColor, half4 innerColor, float brightness, out half4 Out) {
+    void RayMarchingCubeSphereCut_float(float3 cubeSize, float3 cubePosition, float sphereRadius, float3 rayStartPoint, float3 rayDirection, float minDistance, float maxDistance, int maxIterations, float3 lightDirection, half4 outerColor, half4 innerColor, float brightness, out half4 Out) {
 
         // Set the shape options
         _shapeOptions.cubeSize = cubeSize;
         _shapeOptions.cubePosition = cubePosition;
         _shapeOptions.sphereRadius = sphereRadius;
-        _shapeOptions.smoothness = smoothness;
 
         rayDirection = normalize(rayDirection); // normalize the ray direction vector
 
